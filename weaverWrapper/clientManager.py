@@ -1,30 +1,35 @@
 from weaver import client
+
 class weaverThreadManager:
 	def __init__(self,clientIP,clientPort,numThreads):
 		self.clientIP = clientIP
 		self.clientPort = clientPort
-		self.numThreads=numThreads
-		self.threadPool=list()
-		self.threadStatus=list()
+		self.threadPool = []
 		self.createPool(numThreads)
+
+	def _create_weaver_client(self):
+		try:
+			c = client.Client(self.clientIP, self.clientPort)
+			return c
+		except:
+			print 'Connection to Client Failed, Check if the weaver instance is running'
+			return None
+
 	def createPool(self,numThreads):
 		for i in range(numThreads):
-			try:
-				c=client.Client(self.clientIP,self.clientPort)
+			c = self._create_weaver_client()
+			if c:
 				self.threadPool.append(c)
-				self.threadStatus.append(False)
-			except:
-				print 'Connection to Client Failed, Check if the weaver instance is running'
-				assert False
+			else:
+				return False
+
 	def getThread(self):
-		for i in range(self.numThreads):
-			if (not self.threadStatus[i]):
-				self.threadStatus[i]=True
-				return self.threadPool[i],i
-		return False,0
+		if self.threadPool:
+			c = self.threadPool[-1]
+			self.threadPool.pop_back()
+			return c
+		else:
+			return self._create_weaver_client()
 
-	def returnThread(self,i):
-		self.threadStatus[i]=False
-
-
-
+	def returnThread(self,c):
+		self.threadPool.append(c)

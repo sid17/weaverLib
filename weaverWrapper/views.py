@@ -12,7 +12,7 @@ import yaml
 import ast
 clientIP='172.31.33.213'
 clientPort=2002
-numThreads=2
+numThreads=4
 threadPoolObj=CM.weaverThreadManager(clientIP,clientPort,numThreads)
 
 def callWrapperFn(thread,fnName,params):
@@ -53,16 +53,15 @@ def execFn(request):
 		print 'Received Request'
 		data=request.body
 		data=ast.literal_eval(data)
-		thread,index=threadPoolObj.getThread()
-		print thread,index
-		while not thread:
-			time.sleep(10)
-			thread,index=threadPoolObj.getThread()
-		print 'Got Thread'+str(index)
+		thread=threadPoolObj.getThread()
+		if not thread:
+			print 'Unable to contact the weaver server'
+			assert False
+		print 'Recieved a Thread'
 		params=data["params"]
 		fnName=data["fnName"]
 		fnRetVal=callWrapperFn(thread,fnName,params)
-		threadPoolObj.returnThread(index)
-		print 'Return Thread'+str(index)
+		threadPoolObj.returnThread(thread)
+		print 'Returned Thread, Current Thread Pool Size is',len(threadPoolObj.threadPool)
 		return HttpResponse(json.dumps(fnRetVal), content_type="application/json")
 
