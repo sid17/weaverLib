@@ -1,5 +1,6 @@
 from weaver import client
-
+from threading import Lock
+clientLock=Lock()
 class weaverThreadManager:
 	def __init__(self,clientIP,clientPort,numThreads):
 		self.clientIP = clientIP
@@ -16,20 +17,23 @@ class weaverThreadManager:
 			return None
 
 	def createPool(self,numThreads):
-		for i in range(numThreads):
-			c = self._create_weaver_client()
-			if c:
-				self.threadPool.append(c)
-			else:
-				return False
+		with clientLock:
+			for i in range(numThreads):
+				c = self._create_weaver_client()
+				if c:
+					self.threadPool.append(c)
+				else:
+					return False
 
 	def getThread(self):
-		if self.threadPool:
-			c = self.threadPool[-1]
-			self.threadPool.pop_back()
-			return c
-		else:
-			return self._create_weaver_client()
+		with clientLock:
+			if self.threadPool:
+				c = self.threadPool[-1]
+				self.threadPool.pop()
+				return c
+			else:
+				return self._create_weaver_client()
 
 	def returnThread(self,c):
-		self.threadPool.append(c)
+		with clientLock:
+			self.threadPool.append(c)

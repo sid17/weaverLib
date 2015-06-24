@@ -16,7 +16,7 @@ def ProcessNodeData(dataObj,name):
     return data
 
 def ProcessEdgeData(edge,edgeProps):
-    props=dict(edge.properties)
+    props=dict()
     if 'edgeDirection' in edgeProps:
         if edgeProps['edgeDirection']=='B':
             props['source']=edge.end_node
@@ -25,8 +25,6 @@ def ProcessEdgeData(edge,edgeProps):
             props['source']=edge.start_node
             props['target']=edge.end_node
 
-    for key,val in props.iteritems():
-        props[key]=getValFromWeaver(val)
     props['type']=getValFromWeaver(edge.properties['label'])
     props['handle']=edge.handle
     return props
