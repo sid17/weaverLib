@@ -72,7 +72,9 @@ def InsertNode(c,Id='floor',CreatedAt=datetime.datetime.now(),nodeProps={}):
             print 'Internal Error, contact the system administrator:Node'
             return False
 
-def updateNodeProps(Id,nodeProps):
+def updateNodeProps(c,Id='',nodeProps={}):
+    if Id=='':
+        return False
     c.begin_tx()
     c.set_node_properties(node=Id,properties=nodeProps)
     try:
