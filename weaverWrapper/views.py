@@ -47,6 +47,8 @@ def callWrapperFn(thread,fnName,params):
 	elif fnName=='returnPathMinMax':
 		rV=wp.returnPathMinMax(thread,**params)
 		return rV 
+	elif fnName=='updateNodeProps':
+		rV=wp.updateNodeProps(thread,**params)
 
 def execFn(request):
 	if request.method=='GET':

@@ -72,6 +72,17 @@ def InsertNode(c,Id='floor',CreatedAt=datetime.datetime.now(),nodeProps={}):
             print 'Internal Error, contact the system administrator:Node'
             return False
 
+def updateNodeProps(Id,nodeProps):
+    c.begin_tx()
+    c.set_node_properties(node=Id,properties=nodeProps)
+    try:
+        c.end_tx()
+        return True
+    except client.WeaverError:
+        print 'Internal Error, contact the system administrator:Node'
+        return False
+
+
 #Creating a new Concept Relationship in RoboBrain
 def InsertRelation(c,CreatedAt=datetime.datetime.now(),src='1',dst='2',edgeDirection='F',edgeProps={}):
     if not src:
