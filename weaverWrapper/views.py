@@ -49,6 +49,8 @@ def callWrapperFn(thread,fnName,params):
 		return rV 
 	elif fnName=='updateNodeProps':
 		rV=wp.updateNodeProps(thread,**params)
+		print rV		
+		return rV
 
 def execFn(request):
 	if request.method=='GET':
